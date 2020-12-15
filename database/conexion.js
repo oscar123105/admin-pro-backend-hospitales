@@ -8,12 +8,12 @@ const dbConnection = async () => {
             useUnifiedTopology: true,
             useCreateIndex: true
         });
-
         console.log('DB Online');
-    } catch (errro) {
+    } catch (error) {
         console.log(error);
         throw new Error('Error a la hora de iniciar la BD ver logs');
     }
+
 }
 
 module.exports = {
