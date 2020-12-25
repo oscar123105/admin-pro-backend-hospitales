@@ -4,7 +4,18 @@ const { generarJWT } = require('../helpers/jwt');
 
 const getUsuarios = async (req, res) => {
 
-    const usuarios = await Usuario.find({}, 'nombre role google');
+    const desde = Number(req.query.desde) || 0;
+    console.log(desde); 
+    //const usuarios = await Usuario.find({}, 'nombre role google').skip(desde).limit(5);
+
+     const [usuarios, total ] = await Promise.all([
+        Usuario.find({}, 'nombre role google img').skip(desde).limit(5),
+        Usuario.countDocuments()
+
+
+    ]);
+
+
 
     res.json({
         ok: true,
@@ -15,6 +26,7 @@ const getUsuarios = async (req, res) => {
               id: 123,
               nombre: 'Benjamin Guerra Rengifo.'
           }] */
+          total,
           uid:req.uid
     });
 }

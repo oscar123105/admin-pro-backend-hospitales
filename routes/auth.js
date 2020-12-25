@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 
 
 const router = Router();
-//Aui vamos a crear una ruta para el login
+//Aqui vamos a crear una ruta para el login
 router.post('/',
 [
     check('password', 'El password es obligatorio').not().isEmpty(),
