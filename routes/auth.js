@@ -4,7 +4,7 @@ Ruta: /api/login
 const { Router } = require('express');
 const { check } = require('express-validator');
 //importar todos los metodos creados en el controlador 
-const { login } = require('../controllers/auth');
+const { login, googleSignIn } = require('../controllers/auth');
 const { validarCampos } = require('../middlewares/validar-campos');
 
 
@@ -18,5 +18,13 @@ router.post('/',
 ]
 ,
 login);
+//ruta para login de Google
+router.post('/google',
+[
+    check('token', 'El token de google es obligatorio').not().isEmpty(),
+    validarCampos
+]
+,
+googleSignIn);
 
 module.exports = router;
