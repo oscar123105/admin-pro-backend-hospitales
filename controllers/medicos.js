@@ -5,9 +5,9 @@ const { generarJWT } = require('../helpers/jwt');
 const getMedicos = async (req, res) => {
 
     const medico = await Medico.find().populate('usuario', 'nombre').populate('hospital', 'nombre');
-    
 
-   // console.log('prueba medico')
+
+    // console.log('prueba medico')
     res.json({
         ok: true,
         medico
@@ -39,20 +39,70 @@ const crearMedico = async (req, res) => {
 
 }
 
-//Actualizar un usuario
+//Actualizar un medico
 const actualizarMedico = async (req, res) => {
-    res.json({
-        ok: true,
-        msg: 'Actualizar Medico'
-    });
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try {
+        const medico = await Medico.findById(id);
+        if (!medico) {
+            return res.status(400).json({
+                ok: true,
+                msg: 'El medico no existe por id '
+            });
+        }
+
+        const cambiosMedico = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const medicoActualizado = await Medico.findByIdAndUpdate(id, cambiosMedico, { new: true });
+
+        res.json({
+            ok: true,
+            msg: 'Actualizar Medico',
+            medico: medicoActualizado
+
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'ocurrio algun problema en el server'
+        });
+
+    }
 }
 //Borrar un usuario
 const borrarMedico = async (req, res) => {
-    //TODO: validar token y comprobar si es  el usuario correcto
-    res.json({
-        ok: true,
-        msg: 'Borrar Medico'
-    });
+    const uid = req.params.id;
+    try {
+
+        const medicoDB = Medico.findById(uid);
+        if (!medicoDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe medico con ese Id'
+            });
+        }
+        await Medico.findByIdAndDelete(uid);
+        res.json({
+            ok: true,
+            msg: 'Medico eliminado'
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado revisar los logs'
+
+        });
+
+    }
 }
 
 module.exports = {

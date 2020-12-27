@@ -11,29 +11,36 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 const router = Router();
 
 //ruta para obtener usuarios
-router.get('/', getHospitales );
+router.get('/', getHospitales);
 
-//ruta para crear un usuario
+//ruta para crear un hospital
 //aqui vamos a poner como 2 parametro un middleware para validar errores
 router.post('/',
-[
-validarJWT,
-check('nombre','El nombre del hospital es necesario').not().isEmpty(),
-validarCampos
-]
-,
-crearHospital);
+    [
+        validarJWT,
+        check('nombre', 'El nombre del hospital es necesario').not().isEmpty(),
+        validarCampos
+    ]
+    ,
+    crearHospital);
 
-//ruta para actualizar un usuario
+//ruta para actualizar un hospital
 router.put('/:id',
-[
+    [
+        validarJWT,
+        check('nombre', 'El nombre del hospital es necesario').not().isEmpty(),
+        validarCampos
+    ]
+    ,
+    actualizarHospital);
 
-]
-,
-actualizarHospital);
+//ruta para borrar un hospital
+router.delete('/:id',
+    [
+        validarJWT,
+    ],
 
-//ruta para borrar un usuario
-router.delete('/:id',borrarHospital);
+    borrarHospital);
 
 
 module.exports = router;

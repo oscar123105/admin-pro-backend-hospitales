@@ -4,11 +4,11 @@ const { generarJWT } = require('../helpers/jwt');
 
 const getHospitales = async (req, res) => {
 
-const hospitales =  await Hospital.find().populate('usuario','nombre img');
+    const hospitales = await Hospital.find().populate('usuario', 'nombre img');
 
     res.json({
         ok: true,
-        hospitales    
+        hospitales
     });
 
 }
@@ -35,20 +35,73 @@ const crearHospital = async (req, res) => {
     }
 }
 
-//Actualizar un usuario
+//Actualizar un hospital
 const actualizarHospital = async (req, res) => {
-    res.json({
-        ok: true,
-        msg: 'Actualizar Hospitales'
-    });
+
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try {
+        const hospital = await Hospital.findById(id);
+        if (!hospital) {
+            return res.status(400).json({
+                ok: true,
+                msg: 'El hospital no existe por id '
+            });
+        }
+
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate(id,cambiosHospital,{new:true});
+
+        res.json({
+            ok: true,
+            msg: 'Actualizar Hospitales',
+            hospital : hospitalActualizado
+
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'ocurrio algun problema en el server'
+        });
+
+    }
+
+
 }
-//Borrar un usuario
+//Borrar un hospital
 const borrarHospital = async (req, res) => {
-    //TODO: validar token y comprobar si es  el usuario correcto
-    res.json({
-        ok: true,
-        msg: 'Borrar Hospitales'
-    });
+    const uid = req.params.id;
+    try {
+
+        const hospitalDB= Hospital.findById(uid);
+        if(!hospitalDB){
+            return res.status(404).json({
+                ok:false,
+                msg:'No existe hospital con ese Id'
+            });
+        }
+        await Hospital.findByIdAndDelete(uid);
+        res.json({
+            ok: true,            
+            msg: 'Hospital eliminado'
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado revisar los logs'
+
+        });
+
+    }
 }
 
 module.exports = {
